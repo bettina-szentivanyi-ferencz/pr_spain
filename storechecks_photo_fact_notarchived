@@ -1,0 +1,25 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_photo_fact_notarchived CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_photo_fact_notarchived
+(
+  visit_id,
+  value_text,
+  photo_quality,
+  photo_tag,
+  photo_url,
+  max_shelf,
+  photo_quality_reson,
+  photo_index,
+  section_index,
+  photo_group,
+  photo_group_type,
+  photo_group_tags
+)
+AS 
+ SELECT storechecks_photo_fact.visit_id, storechecks_photo_fact.value_text, storechecks_photo_fact.photo_quality, storechecks_photo_fact.photo_tag, storechecks_photo_fact.photo_url, storechecks_photo_fact.max_shelf, storechecks_photo_fact.photo_quality_reson, storechecks_photo_fact.photo_index, storechecks_photo_fact.section_index, storechecks_photo_fact.photo_group, storechecks_photo_fact.photo_group_type, storechecks_photo_fact.photo_group_tags
+   FROM pr_spain.storechecks_photo_fact
+  WHERE (storechecks_photo_fact.visit_id IN ( SELECT DISTINCT storechecks_visit_fact.visit_id
+           FROM pr_spain.storechecks_visit_fact
+          WHERE storechecks_visit_fact.visit_date_key::date >= '2021-01-01'::date));
+
+COMMIT;
