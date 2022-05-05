@@ -1,0 +1,54 @@
+DROP VIEW IF EXISTS pr_spain.blocks_checkin CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.blocks_checkin
+(
+  visit_date_key,
+  store_id,
+  ballantines_eye_level,
+  beefeater_eye_level,
+  seagrams_eye_level,
+  ruavieja_hierbas_eye_level,
+  beefeater_pink_eye_level,
+  ruavieja_crema_eye_level,
+  ruavieja_crema_brand_block,
+  beefeater_pink_brand_block
+)
+AS 
+ SELECT a.visit_date_key, a.store_id, sum(
+        CASE
+            WHEN b.analysis::text = 'group_presence'::character varying::text AND b.product_group_name::text = 'TOTAL_BALLANTINE\'S_STD_Eye_Level'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS ballantines_eye_level, sum(
+        CASE
+            WHEN b.analysis::text = 'group_presence'::character varying::text AND b.product_group_name::text = 'TOTAL_BEEFEATER_DRY_Eye_Level'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS beefeater_eye_level, sum(
+        CASE
+            WHEN b.analysis::text = 'group_presence'::character varying::text AND b.product_group_name::text = 'TOTAL_SEAGRAMS_Eye_Level'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS seagrams_eye_level, sum(
+        CASE
+            WHEN b.analysis::text = 'group_presence'::character varying::text AND b.product_group_name::text = 'TOTAL_RUAVIEJA_HIERBAS_Eye_Level'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS ruavieja_hierbas_eye_level, sum(
+        CASE
+            WHEN b.analysis::text = 'group_presence'::character varying::text AND b.product_group_name::text = 'TOTAL_BEEFEATER_PINK_Eye_level'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS beefeater_pink_eye_level, sum(
+        CASE
+            WHEN b.analysis::text = 'group_presence'::character varying::text AND b.product_group_name::text = 'TOTAL_RUAVIEJA_CREMA_Eye_Level'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS ruavieja_crema_eye_level, sum(
+        CASE
+            WHEN b.analysis::text = 'product_block'::character varying::text AND b.product_group_name::text = 'Ruavieja_Crema_brand_block'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS ruavieja_crema_brand_block, sum(
+        CASE
+            WHEN b.analysis::text = 'product_block'::character varying::text AND b.product_group_name::text = 'Beefeater_Pink_brand_block'::character varying::text AND b.compliant = true THEN 1
+            ELSE NULL::integer
+        END) AS beefeater_pink_brand_block
+   FROM pr_spain.storechecks_visit_fact a, pr_spain.storechecks_kpi_fact b
+  WHERE a.visit_id = b.visit_id AND a.categ_code::text <> 'CATB'::character varying::text AND a.categ_code::text <> 'CATC'::character varying::text AND a.categ_code::text <> 'SVY'::character varying::text AND a.categ_code::text <> 'SPL'::character varying::text AND a.categ_code::text <> 'CACH'::character varying::text AND a.categ_code::text <> 'LIQCH'::character varying::text AND a.categ_code::text <> 'GINCH'::character varying::text AND a.categ_code::text <> 'WHICH'::character varying::text
+  GROUP BY a.visit_date_key, a.store_id;
+
+COMMIT;
