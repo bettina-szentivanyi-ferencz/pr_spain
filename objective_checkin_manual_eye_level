@@ -16,7 +16,7 @@ AS
         CASE
             WHEN sum(
             CASE
-                WHEN (f.question_local::text = 'BEEFEATER Dry 1000 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry + Light eye level'::text OR f.question_local::text = 'BEEFEATER Dry 1500 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry 700 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry LIGHT 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                WHEN (f.question_local::text = 'GINEBRA - BEEFEATER Dry + Light eye level'::character varying::text or f.question_local::text = 'BEEFEATER Dry 1000 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry + Light eye level'::text OR f.question_local::text = 'BEEFEATER Dry 1500 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry 700 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry LIGHT 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
                 ELSE NULL::double precision
             END) > 0::double precision THEN 1
             ELSE 0
@@ -24,7 +24,7 @@ AS
         CASE
             WHEN sum(
             CASE
-                WHEN (f.question_local::text = 'BALLANTINE\'S STD 1000 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 1500 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S Finest + Light eye level'::text OR f.question_local::text = 'BALLANTINE\'S STD 500 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 700 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 700 LIGHT eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                WHEN (f.question_local::text = 'WHISKY - BALLANTINE\'S Finest + Light eye level'::character varying::text or f.question_local::text = 'BALLANTINE\'S STD 1000 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 1500 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S Finest + Light eye level'::text OR f.question_local::text = 'BALLANTINE\'S STD 500 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 700 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 700 LIGHT eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
                 ELSE NULL::double precision
             END) > 0::double precision THEN 1
             ELSE 0
@@ -32,7 +32,7 @@ AS
         CASE
             WHEN sum(
             CASE
-                WHEN (f.question_local::text = 'SEAGRAM\'S Extra Dry 1000 eye level'::character varying::text OR f.question_local::text = 'SEAGRAM\'S Extra Dry  eye level'::text OR f.question_local::text = 'SEAGRAM\'S Extra Dry 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                WHEN (f.question_local::text = 'GINEBRA - SEAGRAM\'S Extra Dry  eye level'::character varying::text or f.question_local::text = 'SEAGRAM\'S Extra Dry 1000 eye level'::character varying::text OR f.question_local::text = 'SEAGRAM\'S Extra Dry  eye level'::text OR f.question_local::text = 'SEAGRAM\'S Extra Dry 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
                 ELSE NULL::double precision
             END) > 0::double precision THEN 1
             ELSE 0
@@ -40,7 +40,7 @@ AS
         CASE
             WHEN sum(
             CASE
-                WHEN (f.question_local::text = 'RUAVIEJA Hierbas 500 eye level'::character varying::text OR f.question_local::text = 'Licores hierbas RUAVIEJA Hierbas eye level'::text OR f.question_local::text = 'RUAVIEJA Hierbas 1000 eye level'::character varying::text OR f.question_local::text = 'RUAVIEJA Hierbas 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                WHEN (f.question_local::text = 'LICORES - Licores hierbas RUAVIEJA Hierbas eye level'::character varying::text or f.question_local::text = 'RUAVIEJA Hierbas 500 eye level'::character varying::text OR f.question_local::text = 'Licores hierbas RUAVIEJA Hierbas eye level'::text OR f.question_local::text = 'RUAVIEJA Hierbas 1000 eye level'::character varying::text OR f.question_local::text = 'RUAVIEJA Hierbas 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
                 ELSE NULL::double precision
             END) > 0::double precision THEN 1
             ELSE 0
@@ -48,7 +48,7 @@ AS
         CASE
             WHEN sum(
             CASE
-                WHEN (f.question_local::text = 'RUAVIEJA Crema Orujo 1000 eye level'::character varying::text OR f.question_local::text = 'Licores crema base leche RUAVIEJA Crema Orujo eye level'::text OR f.question_local::text = 'RUAVIEJA Crema Orujo 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                WHEN (f.question_local::text = 'LICORES - Licores crema base leche RUAVIEJA Crema Orujo eye level'::character varying::text or f.question_local::text = 'RUAVIEJA Crema Orujo 1000 eye level'::character varying::text OR f.question_local::text = 'Licores crema base leche RUAVIEJA Crema Orujo eye level'::text OR f.question_local::text = 'RUAVIEJA Crema Orujo 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
                 ELSE NULL::double precision
             END) > 0::double precision THEN 1
             ELSE 0
@@ -56,7 +56,7 @@ AS
         CASE
             WHEN sum(
             CASE
-                WHEN (f.question_local::text = 'BEEFEATER Pink 700 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Pink eye level'::text) AND f.compliant = true THEN 1::double precision
+                WHEN (f.question_local::text = 'GINEBRA - BEEFEATER Pink eye level'::character varying::text or f.question_local::text = 'BEEFEATER Pink 700 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Pink eye level'::text) AND f.compliant = true THEN 1::double precision
                 ELSE NULL::double precision
             END) > 0::double precision THEN 1
             ELSE 0
