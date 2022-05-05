@@ -1,0 +1,25 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_compliance_fact_notarchived CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_compliance_fact_notarchived
+(
+  visit_id,
+  kpi,
+  kpi_id,
+  value,
+  compliant,
+  threshold,
+  weight,
+  field,
+  group_name,
+  parent,
+  field_value,
+  force_na
+)
+AS 
+ SELECT storechecks_compliance_fact.visit_id, storechecks_compliance_fact.kpi, storechecks_compliance_fact.kpi_id, storechecks_compliance_fact.value, storechecks_compliance_fact.compliant, storechecks_compliance_fact.threshold, storechecks_compliance_fact.weight, storechecks_compliance_fact.field, storechecks_compliance_fact.group_name, storechecks_compliance_fact.parent, storechecks_compliance_fact.field_value, storechecks_compliance_fact.force_na
+   FROM pr_spain.storechecks_compliance_fact
+  WHERE (storechecks_compliance_fact.visit_id IN ( SELECT DISTINCT storechecks_visit_fact.visit_id
+           FROM pr_spain.storechecks_visit_fact
+          WHERE storechecks_visit_fact.visit_date_key::date >= '2021-01-01'::date));
+
+COMMIT;
