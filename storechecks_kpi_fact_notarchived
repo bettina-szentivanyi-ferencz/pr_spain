@@ -1,0 +1,31 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_kpi_fact_notarchived CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_kpi_fact_notarchived
+(
+  visit_id,
+  analysis,
+  kpi,
+  kpi_id,
+  display_group,
+  question_english,
+  question_local,
+  product_group_name,
+  linear,
+  value,
+  target,
+  discrepancy,
+  compliant,
+  kpi_group1,
+  kpi_group2,
+  string_question_answers,
+  numeric_question_answers,
+  facings
+)
+AS 
+ SELECT storechecks_kpi_fact.visit_id, storechecks_kpi_fact.analysis, storechecks_kpi_fact.kpi, storechecks_kpi_fact.kpi_id, storechecks_kpi_fact.display_group, storechecks_kpi_fact.question_english, storechecks_kpi_fact.question_local, storechecks_kpi_fact.product_group_name, storechecks_kpi_fact.linear, storechecks_kpi_fact.value, storechecks_kpi_fact."target", storechecks_kpi_fact.discrepancy, storechecks_kpi_fact.compliant, storechecks_kpi_fact.kpi_group1, storechecks_kpi_fact.kpi_group2, storechecks_kpi_fact.string_question_answers, storechecks_kpi_fact.numeric_question_answers, storechecks_kpi_fact.facings
+   FROM pr_spain.storechecks_kpi_fact
+  WHERE (storechecks_kpi_fact.visit_id IN ( SELECT DISTINCT storechecks_visit_fact.visit_id
+           FROM pr_spain.storechecks_visit_fact
+          WHERE storechecks_visit_fact.visit_date_key::date >= '2021-01-01'::date));
+
+COMMIT;
