@@ -1,0 +1,69 @@
+DROP VIEW IF EXISTS pr_spain.objective_checkin_manual_eye_level CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.objective_checkin_manual_eye_level
+(
+  visit_date_key,
+  store_id,
+  beefeater_eye_level,
+  ballantines_eye_level,
+  seagram_eye_level,
+  ruav_hierb_eye_level,
+  ruav_crema_eye_level,
+  beefeater_pink_eye_level
+)
+AS 
+ SELECT a.visit_date_key, a.store_id, 
+        CASE
+            WHEN sum(
+            CASE
+                WHEN (f.question_local::text = 'BEEFEATER Dry 1000 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry + Light eye level'::text OR f.question_local::text = 'BEEFEATER Dry 1500 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry 700 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Dry LIGHT 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                ELSE NULL::double precision
+            END) > 0::double precision THEN 1
+            ELSE 0
+        END AS beefeater_eye_level, 
+        CASE
+            WHEN sum(
+            CASE
+                WHEN (f.question_local::text = 'BALLANTINE\'S STD 1000 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 1500 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S Finest + Light eye level'::text OR f.question_local::text = 'BALLANTINE\'S STD 500 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 700 eye level'::character varying::text OR f.question_local::text = 'BALLANTINE\'S STD 700 LIGHT eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                ELSE NULL::double precision
+            END) > 0::double precision THEN 1
+            ELSE 0
+        END AS ballantines_eye_level, 
+        CASE
+            WHEN sum(
+            CASE
+                WHEN (f.question_local::text = 'SEAGRAM\'S Extra Dry 1000 eye level'::character varying::text OR f.question_local::text = 'SEAGRAM\'S Extra Dry  eye level'::text OR f.question_local::text = 'SEAGRAM\'S Extra Dry 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                ELSE NULL::double precision
+            END) > 0::double precision THEN 1
+            ELSE 0
+        END AS seagram_eye_level, 
+        CASE
+            WHEN sum(
+            CASE
+                WHEN (f.question_local::text = 'RUAVIEJA Hierbas 500 eye level'::character varying::text OR f.question_local::text = 'Licores hierbas RUAVIEJA Hierbas eye level'::text OR f.question_local::text = 'RUAVIEJA Hierbas 1000 eye level'::character varying::text OR f.question_local::text = 'RUAVIEJA Hierbas 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                ELSE NULL::double precision
+            END) > 0::double precision THEN 1
+            ELSE 0
+        END AS ruav_hierb_eye_level, 
+        CASE
+            WHEN sum(
+            CASE
+                WHEN (f.question_local::text = 'RUAVIEJA Crema Orujo 1000 eye level'::character varying::text OR f.question_local::text = 'Licores crema base leche RUAVIEJA Crema Orujo eye level'::text OR f.question_local::text = 'RUAVIEJA Crema Orujo 700 eye level'::character varying::text) AND f.compliant = true THEN 1::double precision
+                ELSE NULL::double precision
+            END) > 0::double precision THEN 1
+            ELSE 0
+        END AS ruav_crema_eye_level, 
+        CASE
+            WHEN sum(
+            CASE
+                WHEN (f.question_local::text = 'BEEFEATER Pink 700 eye level'::character varying::text OR f.question_local::text = 'BEEFEATER Pink eye level'::text) AND f.compliant = true THEN 1::double precision
+                ELSE NULL::double precision
+            END) > 0::double precision THEN 1
+            ELSE 0
+        END AS beefeater_pink_eye_level
+   FROM pr_spain.storechecks_kpi_fact f
+   JOIN pr_spain.storechecks_visit_fact a ON f.visit_id = a.visit_id
+  WHERE a.categ_code::text <> 'WMAN'::character varying::text AND a.categ_code::text <> 'CACH'::character varying::text AND a.categ_code::text <> 'CATB'::character varying::text AND a.categ_code::text <> 'CATC'::character varying::text AND a.categ_code::text <> 'SVY'::character varying::text AND a.categ_code::text <> 'SPL'::character varying::text AND a.categ_code::text <> 'CACH'::character varying::text AND a.categ_code::text <> 'GINCH'::character varying::text AND a.categ_code::text <> 'LIQCH'::character varying::text AND a.categ_code::text <> 'PROMO'::character varying::text AND a.categ_code::text <> 'WHICH'::character varying::text AND a."process_type"::text = 'Manual'::character varying::text
+  GROUP BY a.visit_date_key, a.store_id;
+
+COMMIT;
