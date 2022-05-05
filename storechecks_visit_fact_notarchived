@@ -1,0 +1,26 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_visit_fact_notarchived CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_visit_fact_notarchived
+(
+  account_id,
+  visit_id,
+  visit_date_key,
+  analysis_date_key,
+  categ_code,
+  categ_name,
+  user_comment,
+  owner_id,
+  store_id,
+  number_of_pictures,
+  number_of_sections,
+  process_type,
+  plan_tag
+)
+AS 
+ SELECT storechecks_visit_fact.account_id, storechecks_visit_fact.visit_id, storechecks_visit_fact.visit_date_key, storechecks_visit_fact.analysis_date_key, storechecks_visit_fact.categ_code, storechecks_visit_fact.categ_name, storechecks_visit_fact.user_comment, storechecks_visit_fact.owner_id, storechecks_visit_fact.store_id, storechecks_visit_fact.number_of_pictures, storechecks_visit_fact.number_of_sections, storechecks_visit_fact."process_type", storechecks_visit_fact.plan_tag
+   FROM pr_spain.storechecks_visit_fact
+  WHERE (storechecks_visit_fact.visit_id IN ( SELECT DISTINCT storechecks_visit_fact.visit_id
+           FROM pr_spain.storechecks_visit_fact
+          WHERE storechecks_visit_fact.visit_date_key::date >= '2021-01-01'::date));
+
+COMMIT;
