@@ -1,0 +1,57 @@
+DROP VIEW IF EXISTS pr_spain.store_objective_checkin_manual_for_merge CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.store_objective_checkin_manual_for_merge
+(
+  visit_date_key,
+  store_id,
+  description,
+  store_type,
+  rank,
+  beefeater_normal_dry_700_lin,
+  beefeater_normal_dry_700_fac,
+  ballantines_std_700_lin,
+  ballantines_std_700_fac,
+  beefeater_light_lin,
+  beefeater_light_fac,
+  ballantines_light_lin,
+  ballantines_light_fac,
+  max_hierbas_facings,
+  max_hierbas_linear,
+  ballantines_eye_level,
+  beefeater_eye_level,
+  seagrams_eye_level,
+  ruavieja_hierbas_eye_level,
+  beefeater_pink_eye_level,
+  ruavieja_crema_eye_level,
+  ruavieja_crema_brand_block,
+  beefeater_pink_brand_block,
+  ballantines_std_lin,
+  jb_std_lin,
+  beefeater_normal_dry_lin,
+  larios_normal_dry_lin,
+  seagrams_extra_dry_lin,
+  tanqueray_london_lin,
+  ruavieja_hierbas_lin,
+  beefeater_pink_lin,
+  puert_de_indias_strawberry_lin,
+  ruavieja_crema_lin,
+  baileys_whisky_lin,
+  ballantines_std_fac,
+  jb_std_fac,
+  beefeater_normal_dry_fac,
+  larios_normal_dry_fac,
+  seagrams_extra_dry_fac,
+  tanqueray_london_fac,
+  ruavieja_hierbas_fac,
+  beefeater_pink_fac,
+  puert_de_indias_strawberry_fac,
+  ruavieja_crema_fac,
+  baileys_whisky_fac
+)
+AS 
+ SELECT a.visit_date_key, a.store_id, a.description, a.store_type, a.rank, 0 AS beefeater_normal_dry_700_lin, "max"(a.beefeater_normal_dry_700_fac) AS beefeater_normal_dry_700_fac, 0 AS ballantines_std_700_lin, "max"(a.ballantines_std_700_fac) AS ballantines_std_700_fac, 0 AS beefeater_light_lin, "max"(a.beefeater_light_fac) AS beefeater_light_fac, 0 AS ballantines_light_lin, "max"(a.ballantines_light_fac) AS ballantines_light_fac, 0 AS max_hierbas_facings, 0 AS max_hierbas_linear, b.ballantines_eye_level, b.beefeater_eye_level, b.seagram_eye_level AS seagrams_eye_level, b.ruav_hierb_eye_level AS ruavieja_hierbas_eye_level, b.beefeater_pink_eye_level, b.ruav_crema_eye_level AS ruavieja_crema_eye_level, 0 AS ruavieja_crema_brand_block, 0 AS beefeater_pink_brand_block, 0 AS ballantines_std_lin, 0 AS jb_std_lin, 0 AS beefeater_normal_dry_lin, 0 AS larios_normal_dry_lin, 0 AS seagrams_extra_dry_lin, 0 AS tanqueray_london_lin, 0 AS ruavieja_hierbas_lin, 0 AS beefeater_pink_lin, 0 AS puert_de_indias_strawberry_lin, 0 AS ruavieja_crema_lin, 0 AS baileys_whisky_lin, "max"(a.ballantines_std_fac) AS ballantines_std_fac, "max"(a.jb_std_fac) AS jb_std_fac, "max"(a.beefeater_normal_dry_fac) AS beefeater_normal_dry_fac, "max"(a.larios_normal_dry_fac) AS larios_normal_dry_fac, "max"(a.seagrams_extra_dry_fac) AS seagrams_extra_dry_fac, "max"(a.tanqueray_london_fac) AS tanqueray_london_fac, "max"(a.ruavieja_hierbas_fac) AS ruavieja_hierbas_fac, "max"(a.beefeater_pink_fac) AS beefeater_pink_fac, "max"(a.puert_de_indias_strawberry_fac) AS puert_de_indias_strawberry_fac, "max"(a.ruavieja_crema_fac) AS ruavieja_crema_fac, "max"(a.baileys_whisky_fac) AS baileys_whisky_fac
+   FROM pr_spain.objective_checkin_manual_sos a
+   LEFT JOIN pr_spain.objective_checkin_manual_eye_level b ON a.visit_date_key = b.visit_date_key AND a.store_id = b.store_id
+  GROUP BY a.visit_date_key, a.store_id, a.description, a.store_type, a.rank, b.ballantines_eye_level, b.beefeater_eye_level, b.seagram_eye_level, b.ruav_hierb_eye_level, b.beefeater_pink_eye_level, b.ruav_crema_eye_level;
+
+COMMIT;
