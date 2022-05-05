@@ -1,0 +1,36 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_planogram_fact_notarchived CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_planogram_fact_notarchived
+(
+  visit_id,
+  store_id,
+  product_id,
+  product_ean,
+  photo_index,
+  section_index,
+  shelf_level,
+  horizontal_position_index,
+  vertical_position,
+  out_of_stock,
+  currnt_stat,
+  facings,
+  min_shelf_lvl_target,
+  max_shelf_lvl_target,
+  min_hor_pos_target,
+  max_hor_pos_target,
+  price,
+  linear
+)
+AS 
+ SELECT storechecks_planogram_fact_view2.visit_id, storechecks_planogram_fact_view2.store_id, storechecks_planogram_fact_view2.product_id, storechecks_planogram_fact_view2.product_ean, storechecks_planogram_fact_view2.photo_index, storechecks_planogram_fact_view2.section_index, storechecks_planogram_fact_view2.shelf_level, storechecks_planogram_fact_view2.horizontal_position_index, storechecks_planogram_fact_view2.vertical_position, storechecks_planogram_fact_view2.out_of_stock, storechecks_planogram_fact_view2.currnt_stat, storechecks_planogram_fact_view2.facings, storechecks_planogram_fact_view2.min_shelf_lvl_target, storechecks_planogram_fact_view2.max_shelf_lvl_target, storechecks_planogram_fact_view2.min_hor_pos_target, storechecks_planogram_fact_view2.max_hor_pos_target, storechecks_planogram_fact_view2.price, storechecks_planogram_fact_view2.linear
+   FROM pr_spain.storechecks_planogram_fact_view2
+  WHERE (storechecks_planogram_fact_view2.visit_id IN ( SELECT DISTINCT storechecks_visit_fact.visit_id
+           FROM pr_spain.storechecks_visit_fact
+          WHERE storechecks_visit_fact.visit_date_key::date >= '2021-04-01'::date));
+
+
+GRANT SELECT ON pr_spain.storechecks_planogram_fact_notarchived TO powerbi_user1;
+GRANT TRIGGER, SELECT, DELETE, UPDATE, RULE, INSERT, REFERENCES ON pr_spain.storechecks_planogram_fact_notarchived TO plano_auto_export;
+
+
+COMMIT;
