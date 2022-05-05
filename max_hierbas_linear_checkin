@@ -1,0 +1,18 @@
+DROP VIEW IF EXISTS pr_spain.max_hierbas_linear_checkin CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.max_hierbas_linear_checkin
+(
+  visit_date_key,
+  store_id,
+  max_hierbas_linear
+)
+AS 
+ SELECT derived_table1.visit_date_key, derived_table1.store_id, "max"(derived_table1.linear) AS max_hierbas_linear
+   FROM ( SELECT date(a.visit_date_key) AS visit_date_key, a.store_id, c.brand, c.desc_b, sum(b.linear) AS linear
+           FROM pr_spain.storechecks_visit_fact a, pr_spain.storechecks_product_fact b, pr_spain.product_master c
+          WHERE (a.categ_code::text = 'LIQ'::character varying::text OR a.categ_code::text = 'CAA'::character varying::text) AND a.visit_id = b.visit_id AND c.manufacturer::text <> 'MD'::character varying::text AND c.brand::text <> 'RUAVIEJA'::character varying::text AND c.product_ean::text <> '29907800001121'::character varying::text AND b.product_id = c.product_id AND (b.is_top = true OR (c.product_ean IN ( SELECT not_top_list.ean
+                   FROM pr_spain.not_top_list))) AND c.seg2::text ~~ '%HIERBAS%'::character varying::text AND c.is_validated = true
+          GROUP BY date(a.visit_date_key), a.store_id, c.brand, c.desc_b) derived_table1
+  GROUP BY derived_table1.visit_date_key, derived_table1.store_id;
+
+COMMIT;
