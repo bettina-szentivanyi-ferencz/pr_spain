@@ -1,0 +1,40 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_product_fact_notarchived CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_product_fact_notarchived
+(
+  visit_id,
+  product_id,
+  product_ean,
+  own,
+  currnt_stat,
+  value,
+  out_of_stock,
+  ranking,
+  facings_tgt,
+  top_display,
+  star_display,
+  core_display,
+  npd_display,
+  is_top,
+  is_star,
+  is_core,
+  is_npd,
+  linear,
+  facings,
+  packages,
+  is_promo,
+  price
+)
+AS 
+ SELECT storechecks_product_fact_view.visit_id, storechecks_product_fact_view.product_id, storechecks_product_fact_view.product_ean, storechecks_product_fact_view.own, storechecks_product_fact_view.currnt_stat, storechecks_product_fact_view.value, storechecks_product_fact_view.out_of_stock, storechecks_product_fact_view.ranking, storechecks_product_fact_view.facings_tgt, storechecks_product_fact_view.top_display, storechecks_product_fact_view.star_display, storechecks_product_fact_view.core_display, storechecks_product_fact_view.npd_display, storechecks_product_fact_view.is_top, storechecks_product_fact_view.is_star, storechecks_product_fact_view.is_core, storechecks_product_fact_view.is_npd, storechecks_product_fact_view.linear, storechecks_product_fact_view.facings, storechecks_product_fact_view.packages, storechecks_product_fact_view.is_promo, storechecks_product_fact_view.price
+   FROM pr_spain.storechecks_product_fact_view
+  WHERE (storechecks_product_fact_view.visit_id IN ( SELECT DISTINCT storechecks_visit_fact.visit_id
+           FROM pr_spain.storechecks_visit_fact
+          WHERE storechecks_visit_fact.visit_date_key::date >= '2021-04-01'::date));
+
+
+GRANT SELECT ON pr_spain.storechecks_product_fact_notarchived TO powerbi_user1;
+GRANT TRIGGER, SELECT, DELETE, UPDATE, RULE, INSERT, REFERENCES ON pr_spain.storechecks_product_fact_notarchived TO plano_auto_export;
+
+
+COMMIT;
