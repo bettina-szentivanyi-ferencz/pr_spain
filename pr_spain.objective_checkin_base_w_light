@@ -1,0 +1,314 @@
+DROP VIEW IF EXISTS pr_spain.objective_checkin_base_w_light CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.objective_checkin_base_w_light
+(
+  visit_date_key,
+  store_id,
+  description,
+  store_type,
+  rank,
+  beefeater_normal_dry_700_lin,
+  beefeater_normal_dry_700_fac,
+  ballantines_std_700_lin,
+  ballantines_std_700_fac,
+  beefeater_light_lin,
+  beefeater_light_fac,
+  ballantines_light_lin,
+  ballantines_light_fac,
+  ballantines_std_lin,
+  ballantines_std_count,
+  ballantines_std_void_count,
+  jb_std_lin,
+  jb_std_count,
+  jb_std_void_count,
+  beefeater_normal_dry_lin,
+  beefeater_normal_dry_count,
+  beefeater_normal_dry_void_count,
+  larios_normal_dry_lin,
+  larios_normal_dry_count,
+  larios_normal_dry_void_count,
+  seagrams_extra_dry_lin,
+  seagrams_extra_dry_count,
+  seagrams_extra_dry_void_count,
+  tanqueray_london_lin,
+  tanqueray_london_count,
+  tanqueray_london_void_count,
+  ruavieja_hierbas_lin,
+  ruavieja_hierbas_count,
+  ruavieja_hierbas_void_count,
+  beefeater_pink_lin,
+  beefeater_pink_count,
+  beefeater_pink_void_count,
+  puert_de_indias_strawberry_lin,
+  puert_de_indias_strawberry_count,
+  puert_de_indias_strawberry_void_count,
+  ruavieja_crema_lin,
+  ruavieja_crema_count,
+  ruavieja_crema_void_count,
+  baileys_whisky_lin,
+  baileys_whisky_count,
+  baileys_whisky_void_count,
+  ballantines_std_fac,
+  jb_std_fac,
+  beefeater_normal_dry_fac,
+  larios_normal_dry_fac,
+  seagrams_extra_dry_fac,
+  tanqueray_london_fac,
+  ruavieja_hierbas_fac,
+  beefeater_pink_fac,
+  puert_de_indias_strawberry_fac,
+  ruavieja_crema_fac,
+  baileys_whisky_fac
+)
+AS 
+ SELECT a.visit_date_key, a.store_id, b.description, b.desc_b AS store_type, pg_catalog.dense_rank()
+  OVER( 
+  PARTITION BY a.store_id
+  ORDER BY date(a.visit_date_key) DESC) AS rank, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_h::text = '700'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS beefeater_normal_dry_700_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_h::text = '700'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings::double precision
+            ELSE NULL::double precision
+        END) AS beefeater_normal_dry_700_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BALLANTINES'::character varying::text AND d.desc_h::text = '700'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS ballantines_std_700_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BALLANTINES'::character varying::text AND d.desc_h::text = '700'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings::double precision
+            ELSE NULL::double precision
+        END) AS ballantines_std_700_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.description::text = 'GINEBRA NO SABORIZADA BEEFEATER LIGHT NORMAL DRY 700'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS beefeater_light_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.description::text = 'GINEBRA NO SABORIZADA BEEFEATER LIGHT NORMAL DRY 700'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings::double precision
+            ELSE NULL::double precision
+        END) AS beefeater_light_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.description::text = 'WHISKY ESCOCES BALLANTINES STD LIGHT FINEST 700'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS ballantines_light_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.description::text = 'WHISKY ESCOCES BALLANTINES STD LIGHT FINEST 700'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings::double precision
+            ELSE NULL::double precision
+        END) AS ballantines_light_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BALLANTINES'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS ballantines_std_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BALLANTINES'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS ballantines_std_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BALLANTINES'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS ballantines_std_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'J B'::character varying::text AND (d.desc_b::text = 'STD'::character varying::text OR d.desc_b::text = 'BOTANICO'::character varying::text) AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS jb_std_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'J B'::character varying::text AND (d.desc_b::text = 'STD'::character varying::text OR d.desc_b::text = 'BOTANICO'::character varying::text) AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS jb_std_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'J B'::character varying::text AND (d.desc_b::text = 'STD'::character varying::text OR d.desc_b::text = 'BOTANICO'::character varying::text) AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS jb_std_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS beefeater_normal_dry_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS beefeater_normal_dry_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS beefeater_normal_dry_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'LARIOS'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS larios_normal_dry_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'LARIOS'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS larios_normal_dry_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'LARIOS'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS larios_normal_dry_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'SEAGRAM\'S'::character varying::text AND d.desc_b::text = 'EXTRA DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS seagrams_extra_dry_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'SEAGRAM\'S'::character varying::text AND d.desc_b::text = 'EXTRA DRY'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS seagrams_extra_dry_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'SEAGRAM\'S'::character varying::text AND d.desc_b::text = 'EXTRA DRY'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS seagrams_extra_dry_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'TANQUERAY'::character varying::text AND d.desc_b::text = 'LONDON'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS tanqueray_london_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'TANQUERAY'::character varying::text AND d.desc_b::text = 'LONDON'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS tanqueray_london_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'TANQUERAY'::character varying::text AND d.desc_b::text = 'LONDON'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS tanqueray_london_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND d.desc_b::text = 'HIERBAS'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS ruavieja_hierbas_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND d.desc_b::text = 'HIERBAS'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS ruavieja_hierbas_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND d.desc_b::text = 'HIERBAS'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS ruavieja_hierbas_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'PINK'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS beefeater_pink_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'PINK'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS beefeater_pink_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'PINK'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS beefeater_pink_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'PUERTO DE INDIAS'::character varying::text AND d.desc_b::text = 'STRAWBERRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS puert_de_indias_strawberry_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'PUERTO DE INDIAS'::character varying::text AND d.desc_b::text = 'STRAWBERRY'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS puert_de_indias_strawberry_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'PUERTO DE INDIAS'::character varying::text AND d.desc_b::text = 'STRAWBERRY'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS puert_de_indias_strawberry_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND (d.desc_b::text = 'CREMA ORUJO'::character varying::text OR d.desc_b::text = 'TE JENGIBRE'::character varying::text) AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS ruavieja_crema_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND d.desc_b::text = 'CREMA ORUJO'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS ruavieja_crema_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND d.desc_b::text = 'CREMA ORUJO'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS ruavieja_crema_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BAILEYS'::character varying::text AND d.desc_b::text = 'CREMA WHISKY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.linear
+            ELSE NULL::double precision
+        END) AS baileys_whisky_lin, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BAILEYS'::character varying::text AND d.desc_b::text = 'CREMA WHISKY'::character varying::text AND c.is_top = true THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS baileys_whisky_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BAILEYS'::character varying::text AND d.desc_b::text = 'CREMA WHISKY'::character varying::text AND c.is_top = true AND c.currnt_stat::text = 'void'::character varying::text THEN 1::double precision
+            ELSE NULL::double precision
+        END) AS baileys_whisky_void_count, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BALLANTINES'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS ballantines_std_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'J B'::character varying::text AND d.desc_b::text = 'STD'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS jb_std_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS beefeater_normal_dry_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'LARIOS'::character varying::text AND d.desc_b::text = 'NORMAL DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS larios_normal_dry_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'SEAGRAM\'S'::character varying::text AND d.desc_b::text = 'EXTRA DRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS seagrams_extra_dry_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'TANQUERAY'::character varying::text AND d.desc_b::text = 'LONDON'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS tanqueray_london_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND d.desc_b::text = 'HIERBAS'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS ruavieja_hierbas_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BEEFEATER'::character varying::text AND d.desc_b::text = 'PINK'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS beefeater_pink_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'PUERTO DE INDIAS'::character varying::text AND d.desc_b::text = 'STRAWBERRY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS puert_de_indias_strawberry_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'RUAVIEJA'::character varying::text AND (d.desc_b::text = 'TE JENGIBRE'::character varying::text OR d.desc_b::text = 'CREMA ORUJO'::character varying::text) AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS ruavieja_crema_fac, sum(
+        CASE
+            WHEN d.is_validated = true AND d.brand::text = 'BAILEYS'::character varying::text AND d.desc_b::text = 'CREMA WHISKY'::character varying::text AND (c.is_top = true OR (d.product_ean IN ( SELECT not_top_list.ean
+               FROM pr_spain.not_top_list))) THEN c.facings
+            ELSE NULL::smallint
+        END) AS baileys_whisky_fac
+   FROM pr_spain.storechecks_visit_fact_exclusion a
+   LEFT JOIN pr_spain.store_master b ON a.store_id = b.store_id
+   LEFT JOIN pr_spain.storechecks_product_fact c ON a.visit_id = c.visit_id
+   LEFT JOIN pr_spain.product_master d ON c.product_id = d.product_id
+   JOIN pr_spain.storechecks_visit_fact e ON a.visit_id = e.visit_id AND e."process_type"::text = 'Digital'::character varying::text
+  WHERE a.categ_code::text <> 'WMAN'::character varying::text AND a.categ_code::text <> 'CACH'::character varying::text AND a.categ_code::text <> 'CATB'::character varying::text AND a.categ_code::text <> 'CATC'::character varying::text AND a.categ_code::text <> 'SVY'::character varying::text AND a.categ_code::text <> 'SPL'::character varying::text AND a.categ_code::text <> 'CACH'::character varying::text AND a.categ_code::text <> 'GINCH'::character varying::text AND a.categ_code::text <> 'LIQCH'::character varying::text AND a.categ_code::text <> 'PROMO'::character varying::text AND a.categ_code::text <> 'WHICH'::character varying::text AND a.categ_code::text <> 'WNS'::character varying::text
+  GROUP BY a.visit_date_key, a.store_id, b.description, b.desc_b, a.categ_name;
+
+COMMIT;
