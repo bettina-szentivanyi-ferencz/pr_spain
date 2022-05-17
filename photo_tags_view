@@ -1,0 +1,22 @@
+DROP VIEW IF EXISTS pr_spain.photo_tags_view CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.photo_tags_view
+(
+  visit_id,
+  photo_index,
+  photo_tag,
+  photo_group_type,
+  photo_url
+)
+AS 
+ SELECT DISTINCT a.visit_id, a.photo_index, a.photo_tag, a.photo_group_type, a.photo_url
+   FROM pr_spain.photo_tags a
+   LEFT JOIN pr_spain.storechecks_visit_fact b ON a.visit_id::character(255) = b.visit_id
+  WHERE a.photo_tag <> ''::bpchar AND b.categ_name::text = 'Promotions'::character varying::text AND a.photo_url::text <> ''::text;
+
+
+GRANT SELECT ON pr_spain.photo_tags_view TO powerbi_user1;
+GRANT TRIGGER, SELECT, DELETE, UPDATE, RULE, INSERT, REFERENCES ON pr_spain.photo_tags_view TO plano_auto_export;
+
+
+COMMIT;
