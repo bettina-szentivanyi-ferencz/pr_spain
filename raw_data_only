@@ -1,0 +1,49 @@
+DROP VIEW IF EXISTS pr_spain.raw_data_only CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.raw_data_only
+(
+  visit_id,
+  product_id,
+  product_ean,
+  own,
+  photo_index,
+  section_index,
+  shelf_level,
+  horizontal_position_index,
+  vertical_position,
+  out_of_stock,
+  currnt_stat,
+  facings,
+  packages,
+  linear,
+  price,
+  promo,
+  min_shelf_lvl_target,
+  max_shelf_lvl_target,
+  min_hor_pos_target,
+  max_hor_pos_target,
+  photo_group,
+  photo_group_type
+)
+AS 
+ SELECT DISTINCT a.visit_id, a.product_id, a.product_ean, a.own, a.photo_index, a.section_index, a.shelf_level, a.horizontal_position_index, a.vertical_position, a.out_of_stock::bigint::boolean AS out_of_stock, a.currnt_stat, a.facings, a.packages, a.linear, a.price, a.promo, b.min_shelf_lvl_target, b.max_shelf_lvl_target, b.min_hor_pos_target, b.max_hor_pos_target, a.photo_group, a.photo_group_type
+   FROM pr_spain.raw_data a
+   LEFT JOIN ( SELECT raw_data.visit_id, raw_data.product_id, split_part(raw_data.product_ean::text, '/'::character varying::text, 1) AS product_ean1, split_part(raw_data.product_ean::text, '/'::character varying::text, 2) AS product_ean2, strtol(ltrim(split_part(raw_data.shelf_lvl_target::text, '<'::character varying::text, 1), '>='::character varying::text)::character varying, 10) AS min_shelf_lvl_target, 
+                CASE
+                    WHEN ltrim(split_part(raw_data.shelf_lvl_target::text, '<'::character varying::text, 2), '='::character varying::text) = ''::character varying::text THEN strtol(raw_data.shelf_lvl_target, 10)
+                    ELSE strtol(ltrim(split_part(raw_data.shelf_lvl_target::text, '<'::character varying::text, 2), '='::character varying::text)::character varying, 10)
+                END AS max_shelf_lvl_target, strtol(ltrim(split_part(raw_data.hor_pos_target::text, '<'::character varying::text, 1), '>='::character varying::text)::character varying, 10) AS min_hor_pos_target, 
+                CASE
+                    WHEN ltrim(split_part(raw_data.hor_pos_target::text, '<'::character varying::text, 2), '='::character varying::text) = ''::character varying::text THEN strtol(raw_data.hor_pos_target, 10)
+                    ELSE strtol(ltrim(split_part(raw_data.hor_pos_target::text, '<'::character varying::text, 2), '='::character varying::text)::character varying, 10)
+                END AS max_hor_pos_target
+           FROM pr_spain.raw_data
+          WHERE raw_data.kpi::text = 'top_sku'::character varying::text OR raw_data.kpi::text = 'star_sku'::character varying::text OR raw_data.kpi::text = 'core_sku'::character varying::text OR raw_data.kpi::text = 'npd'::character varying::text) b ON a.visit_id::text = b.visit_id::text AND (a.product_ean::text = b.product_ean1::character varying::text OR a.product_ean::text = b.product_ean2::character varying::text)
+  WHERE a.analysis::text = 'raw_data'::character varying::text AND date(a.visit_date) > '2019-03-31'::date;
+
+
+GRANT SELECT ON pr_spain.raw_data_only TO powerbi_user1;
+GRANT TRIGGER, SELECT, DELETE, UPDATE, RULE, INSERT, REFERENCES ON pr_spain.raw_data_only TO plano_auto_export;
+
+
+COMMIT;
