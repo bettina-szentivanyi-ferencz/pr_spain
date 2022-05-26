@@ -1,0 +1,37 @@
+DROP VIEW IF EXISTS pr_spain.storechecks_planogram_fact_view2 CASCADE;
+
+CREATE OR REPLACE VIEW pr_spain.storechecks_planogram_fact_view2
+(
+  visit_id,
+  store_id,
+  product_id,
+  product_ean,
+  photo_index,
+  section_index,
+  shelf_level,
+  horizontal_position_index,
+  vertical_position,
+  out_of_stock,
+  currnt_stat,
+  facings,
+  min_shelf_lvl_target,
+  max_shelf_lvl_target,
+  min_hor_pos_target,
+  max_hor_pos_target,
+  price,
+  linear
+)
+AS 
+ SELECT storechecks_planogram_fact.visit_id, storechecks_visit_fact.store_id, storechecks_planogram_fact.product_id, storechecks_planogram_fact.product_ean, storechecks_planogram_fact.photo_index, storechecks_planogram_fact.section_index, storechecks_planogram_fact.shelf_level, storechecks_planogram_fact.horizontal_position_index, storechecks_planogram_fact.vertical_position, storechecks_planogram_fact.out_of_stock, storechecks_planogram_fact.currnt_stat, storechecks_planogram_fact.facings, storechecks_planogram_fact.min_shelf_lvl_target, storechecks_planogram_fact.max_shelf_lvl_target, storechecks_planogram_fact.min_hor_pos_target, storechecks_planogram_fact.max_hor_pos_target, storechecks_planogram_fact.price, raw_data.linear
+   FROM pr_spain.storechecks_planogram_fact storechecks_planogram_fact
+   LEFT JOIN pr_spain.storechecks_visit_fact storechecks_visit_fact ON storechecks_visit_fact.visit_id = storechecks_planogram_fact.visit_id
+   LEFT JOIN pr_spain.raw_data raw_data ON storechecks_planogram_fact.visit_id = raw_data.visit_id::character(255) AND storechecks_planogram_fact.product_id::character(1) = raw_data.product_id::character(1) AND storechecks_planogram_fact.photo_index::character(1) = raw_data.photo_index::character(1) AND storechecks_planogram_fact.section_index::integer = raw_data.section_index::integer AND storechecks_planogram_fact.shelf_level::integer = raw_data.shelf_level::integer AND storechecks_planogram_fact.horizontal_position_index::integer = raw_data.horizontal_position_index::integer
+  WHERE (storechecks_planogram_fact.visit_id IN ( SELECT DISTINCT storechecks_visit_fact_view.visit_id
+   FROM pr_spain.storechecks_visit_fact_view));
+
+
+GRANT SELECT ON pr_spain.storechecks_planogram_fact_view2 TO powerbi_user1;
+GRANT TRIGGER, SELECT, DELETE, UPDATE, RULE, INSERT, REFERENCES ON pr_spain.storechecks_planogram_fact_view2 TO plano_auto_export;
+
+
+COMMIT;
